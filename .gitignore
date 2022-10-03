@@ -16,6 +16,9 @@ tools/repack-thes-dict.dSYM
 # Platform-specific
 .DS_Store
 
+# clangd
+.cache/clangd
+
 # Meson
 build*/
 subprojects/boost*/
@@ -33,6 +36,7 @@ subprojects/libass
 subprojects/libffi*
 subprojects/libpng-*
 subprojects/luajit
+subprojects/lua-*
 subprojects/nasm-*
 subprojects/packagecache
 subprojects/proxy-libintl*

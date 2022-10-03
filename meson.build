@@ -266,38 +266,42 @@ endif
 conf_platform = configuration_data()
 conf_platform.set('DEFAULT_PLAYER_AUDIO', def_audio)
 
-luajit = dependency('luajit', version: '>=2.0.0', required: get_option('system_luajit'))
-if luajit.found() and luajit.type_name() != 'internal'
-    luajit_test = cc.run('''#include <lauxlib.h>
-int main(void)
-{
-    lua_State *L = luaL_newstate();
-    if (!L) return 1;
-    // This is valid in lua 5.2, but a syntax error in 5.1
-    const char testprogram[] = "function foo() while true do break return end end";
-    return luaL_loadstring(L, testprogram) == LUA_ERRSYNTAX;
-}''', dependencies: luajit)
+# luajit = dependency('luajit', version: '>=2.0.0', required: get_option('system_luajit'))
+# if luajit.found() and luajit.type_name() != 'internal'
+#     luajit_test = cc.run('''#include <lauxlib.h>
+# int main(void)
+# {
+#     lua_State *L = luaL_newstate();
+#     if (!L) return 1;
+#     // This is valid in lua 5.2, but a syntax error in 5.1
+#     const char testprogram[] = "function foo() while true do break return end end";
+#     return luaL_loadstring(L, testprogram) == LUA_ERRSYNTAX;
+# }''', dependencies: luajit)
 
-    if luajit_test.returncode() == 1
-        if get_option('system_luajit')
-            error('System luajit found but not compiled in 5.2 mode')
-        else
-            message('System luajit found but not compiled in 5.2 mode; using built-in luajit')
-        endif
-    else
-        deps += luajit
-    endif
-else
-    message('System luajit not found; using built-in luajit')
-endif
+#     if luajit_test.returncode() == 1
+#         if get_option('system_luajit')
+#             error('System luajit found but not compiled in 5.2 mode')
+#         else
+#             message('System luajit found but not compiled in 5.2 mode; using built-in luajit')
+#         endif
+#     else
+#         deps += luajit
+#     endif
+# else
+#     message('System luajit not found; using built-in luajit')
+# endif
 
-if not deps.contains(luajit)
-    luajit_sp = subproject('luajit')
-    luajit_inc = luajit_sp.get_variable('src_inc')
-    deps += luajit_sp.get_variable('luajit_dep')
-else
-    luajit_inc = include_directories(luajit.get_variable('includedir'))
-endif
+# if not deps.contains(luajit)
+#     luajit_sp = subproject('luajit')
+#     luajit_inc = luajit_sp.get_variable('src_inc')
+#     deps += luajit_sp.get_variable('luajit_dep')
+# else
+#     luajit_inc = include_directories(luajit.get_variable('includedir'))
+# endif
+lua_sp = subproject('lua')
+lua_inc = lua_sp.get_variable('src_inc')
+deps += lua_sp.get_variable('lua_dep')
+
 subdir('vendor/luabins/src')
 
 dep_gl = dependency('gl', required: false)
